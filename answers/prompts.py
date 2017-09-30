@@ -37,18 +37,31 @@ def choice(prompt, choices):
     print('{}: {}'.format(prompt, option))
     return option
 
+class Choice:
+    def __init__(self, obj):
+        self._obj = obj
+        self._selected = False
+
+    def check(self):
+        self._selected = not self._selected
+
+    def __str__(self):
+        state = CHECKED if self._selected else UNCHECKED
+        s = '{}{}'.format(state, self._obj)
+        return '\n  '.join(s.split('\n'))
+
 
 class ChoiceList:
     def __init__(self, choices, fmt=lambda x:x):
         if not choices:
             raise ValueError('No choices given')
-        self._choices = [[0, c] for c in choices]
+        self._choices = [Choice(c) for c in choices]
         self._fmt = fmt
         self._idx = 0
 
     def check(self):
         state = self._choices[self._idx]
-        state[0] = not state[0]
+        state.check()
 
     def select(self, index):
         self._idx = index
@@ -57,14 +70,11 @@ class ChoiceList:
         arr = FSArray(len(self._choices), width)
         l = 0
         for i, option in enumerate(self._choices):
-            lines = option[1].split('\n')
+            lines = str(option).split('\n')
             if i == self._idx:
-                fmt = on_blue
+                fmt = bold
             else:
                 fmt = self._fmt
-            state = CHECKED if option[0] else UNCHECKED
-            lines[0] = state + lines[0]
-            lines[1:] = ['  ' + line for line in lines[1:]]
             for j, line in enumerate(lines, l):
                 arr[j:j+1, 0:len(line)] = [fmt(line)]
                 l += 1
@@ -72,11 +82,11 @@ class ChoiceList:
 
     def __len__(self):
         return len(self._choices)
-    
+
     def __getitem__(self, key):
         item = self._choices[key]
-        return '{}{}'.format(CHECKED if item[0] else UNCHECKED, item[1])
-    
+        return item._obj
+
     def __setitem__(self, key, value):
         self._choices[key] = (False, value)
     
