@@ -12,26 +12,19 @@ def choice(prompt, choices):
     choice_list = ChoiceList(choices)
     index = 0
     with CursorAwareWindow(extra_bytes_callback=lambda x: x) as window:
-        # height = min(len(choices) + plen, 10)
         with Input() as inGen:
             parr = FSArray(plen, window.width)
             for i, line in enumerate(plines):
                 parr[i:i+1, 0:len(line)] = [line]
             arr = choice_list.render(window.width)
-            # arr = FSArray(len(choices), window.width)
-            # for j, option in enumerate(choice_list):
-            #     arr[i+j:i+j+1, 0:len(option)] = [option]
             arr.rows = parr.rows + arr.rows
             window.render_to_terminal(arr)
             for i in inGen:
-                # print(i)
                 if i == '<DOWN>':
                     index = min(len(choices)-1, index+1)
-                    # print('going down {}'.format(index))
                     choice_list.select(index)
                 elif i == '<UP>':
                     index = max(0, index-1)
-                    # print('going up {}'.format(index))
                     choice_list.select(index)
                 elif i == '<SPACE>':
                     choice_list.check()
