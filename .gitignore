@@ -1,0 +1,15 @@
+__pycache__/
+**.pyc
+*$py.class
+
+# Sphinx docs
+docs/build # if source/build are separate
+docs/_build # if not
+
+# pytest residual
+.cache/
+.coverage
+
+# vim stuff
+**/.*.swo
+**/.*.swp
