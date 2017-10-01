@@ -43,9 +43,6 @@ class Choice:
 
     def __str__(self):
         return str(self._obj)
-        # state = CHECKED if self._selected else UNCHECKED
-        # s = '{}{}'.format(state, self._obj)
-        # return '\n  '.join(s.split('\n'))
 
     def render(self, fmt, width):
         lines = str(self).split('\n')
