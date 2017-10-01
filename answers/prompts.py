@@ -1,4 +1,4 @@
-from curtsies import FullscreenWindow, Input, FSArray , CursorAwareWindow
+from curtsies import Input, FSArray , CursorAwareWindow, fsarray
 from curtsies.fmtfuncs import red, bold, green, on_blue, yellow
 
 import random
@@ -49,8 +49,7 @@ class Choice:
 
     def render(self, fmt, width):
         lines = str(self).split('\n')
-        arr = FSArray(len(lines), width)
-        arr[0:len(lines), 0:width] = [fmt(line) for line in lines]
+        arr = fsarray(fmt(line) for line in lines)
         return arr
 
 
@@ -70,14 +69,15 @@ class ChoiceList:
         self._idx = index
 
     def render(self, width):
-        arr = FSArray(0, width)
+        arr = fsarray('', width=width)
+        l = 0
         for i, option in enumerate(self._choices):
-            lines = str(option).split('\n')
             fmt = bold if i == self._idx else self._fmt
+            opt_arr = option.render(fmt, width-3)
+            arr[l:l+len(opt_arr), 2:width] = opt_arr
             state = CHECKED if option._selected else UNCHECKED
-            arr.rows.append(fmt(state + lines[0]))
-            rows = [fmt('  ' + line) for line in lines[1:]]
-            arr.rows.extend(rows[1:])
+            arr[l:l+1, 0:2] = fsarray([state])
+            l += len(opt_arr)
         return arr
 
     def get_selection(self):
@@ -85,8 +85,10 @@ class ChoiceList:
 
     def next(self):
         self._idx = min(len(self)-1, self._idx+1)
+
     def prev(self):
         self._idx = max(0, self._idx-1)
+
     def __len__(self):
         return len(self._choices)
 
