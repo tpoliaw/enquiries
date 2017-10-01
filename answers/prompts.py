@@ -94,13 +94,13 @@ class ChoiceList:
         return item._obj
 
     def __setitem__(self, key, value):
-        self._choices[key] = (False, value)
+        self._choices[key] = Choice(value)
 
     def __delitem__(self, key):
         del self._choices[key]
 
     def __contains__(self, item):
-        return item in [i[1] for i in self._choices]
+        return item in [i._obj for i in self._choices]
 
 
 if __name__ == "__main__":
