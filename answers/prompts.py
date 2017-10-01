@@ -8,34 +8,30 @@ UNCHECKED = '\U0001f785 '
 
 def choice(prompt, choices):
     plines = prompt.split('\n')
-    plen = len(plines)
     choice_list = ChoiceList(choices)
-    index = 0
     with CursorAwareWindow(extra_bytes_callback=lambda x: x) as window:
         with Input() as inGen:
-            parr = FSArray(plen, window.width)
-            for i, line in enumerate(plines):
-                parr[i:i+1, 0:len(line)] = [line]
+            parr = FSArray(len(plines), window.width)
+            parr.rows = plines
             arr = choice_list.render(window.width)
             arr.rows = parr.rows + arr.rows
             window.render_to_terminal(arr)
             for i in inGen:
                 if i == '<DOWN>':
-                    index = min(len(choices)-1, index+1)
-                    choice_list.select(index)
+                    choice_list.next()
                 elif i == '<UP>':
-                    index = max(0, index-1)
-                    choice_list.select(index)
+                    choice_list.prev()
                 elif i == '<SPACE>':
                     choice_list.check()
-                    option = choice_list[index]
+                elif i == '<Ctrl-j>':
                     break
                 arr = choice_list.render(window.width)
                 arr.rows = parr.rows + arr.rows
-                window.render_to_terminal(arr)
+                window.render_to_terminal(arr, (0,14))
 
-    print('{}: {}'.format(prompt, option))
-    return option
+    options = choice_list.get_selection()
+    print('{}: {}'.format(prompt, options))
+    return options
 
 class Choice:
     def __init__(self, obj):
@@ -46,9 +42,16 @@ class Choice:
         self._selected = not self._selected
 
     def __str__(self):
-        state = CHECKED if self._selected else UNCHECKED
-        s = '{}{}'.format(state, self._obj)
-        return '\n  '.join(s.split('\n'))
+        return str(self._obj)
+        # state = CHECKED if self._selected else UNCHECKED
+        # s = '{}{}'.format(state, self._obj)
+        # return '\n  '.join(s.split('\n'))
+
+    def render(self, fmt, width):
+        lines = str(self).split('\n')
+        arr = FSArray(len(lines), width)
+        arr[0:len(lines), 0:width] = [fmt(line) for line in lines]
+        return arr
 
 
 class ChoiceList:
@@ -67,19 +70,23 @@ class ChoiceList:
         self._idx = index
 
     def render(self, width):
-        arr = FSArray(len(self._choices), width)
-        l = 0
+        arr = FSArray(0, width)
         for i, option in enumerate(self._choices):
             lines = str(option).split('\n')
-            if i == self._idx:
-                fmt = bold
-            else:
-                fmt = self._fmt
-            for j, line in enumerate(lines, l):
-                arr[j:j+1, 0:len(line)] = [fmt(line)]
-                l += 1
+            fmt = bold if i == self._idx else self._fmt
+            state = CHECKED if option._selected else UNCHECKED
+            arr.rows.append(fmt(state + lines[0]))
+            rows = [fmt('  ' + line) for line in lines[1:]]
+            arr.rows.extend(rows[1:])
         return arr
 
+    def get_selection(self):
+        return [item._obj for item in self._choices if item._selected]
+
+    def next(self):
+        self._idx = min(len(self)-1, self._idx+1)
+    def prev(self):
+        self._idx = max(0, self._idx-1)
     def __len__(self):
         return len(self._choices)
 
@@ -89,7 +96,7 @@ class ChoiceList:
 
     def __setitem__(self, key, value):
         self._choices[key] = (False, value)
-    
+
     def __delitem__(self, key):
         del self._choices[key]
 
