@@ -43,15 +43,3 @@ def test_no_choices():
     with pytest.raises(ValueError):
         prompts.ChoiceList([])
 
-def test_check_option(clist):
-    clist.check()
-    assert clist[0] == 'abcd'
-    clist.check()
-    assert clist[0] == 'abcd'
-
-    clist.select(1)
-    assert clist[1] == 'efgh'
-    clist.check()
-    assert clist[1] == 'efgh'
-
-
