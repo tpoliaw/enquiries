@@ -10,6 +10,9 @@ docs/_build # if not
 .cache/
 .coverage
 
+# tox artifacts
+.tox/
+
 # vim stuff
 **/.*.swo
 **/.*.swp
