@@ -3,8 +3,8 @@ from curtsies.fmtfuncs import red, bold, green, on_blue, yellow
 
 import random
 
-CHECKED = '\U0001f78a '
-UNCHECKED = '\U0001f785 '
+CHECKED = '\u25c9 '
+UNCHECKED = '\u25cc '
 
 def _no_fmt(s):
     return s
