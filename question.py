@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from answers import prompts
+from answers import yesno
 
 if __name__ == "__main__":
     c = prompts.choice('Choose an option', ['option 1', 'option 2', 'option 3'])
@@ -12,3 +13,7 @@ if __name__ == "__main__":
     print('Number: {}'.format(c))
     c = prompts.choice('Finally choose some letters', ['abcd', 'efgh', 'ijkl', 'mnop'])
     print('Letters: {}'.format(', '.join(c)))
+    res = yesno.confirm('Are you sure?')
+    print('Very sure' if res else 'Not sure')
+    res = yesno.confirm('Do you want to continue?', 'Indeed', 'Of course not', single_key=True, default=True)
+    print('Continuing' if res else 'Aborting')
