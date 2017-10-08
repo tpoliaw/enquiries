@@ -7,6 +7,7 @@ ptpython = "*"
 pytest-coverage = "*"
 pytest = "*"
 sphinx = "*"
+click = "*"
 
 [packages]
 curtsies = "*"
