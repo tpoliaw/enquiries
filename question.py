@@ -2,11 +2,16 @@
 # -*- coding: utf-8 -*-
 
 from answers import prompts
+from answers import document
 import click
 
 @click.group()
 def cli():
     pass
+
+@cli.command()
+def free():
+    click.echo(document.prompt('enter text:'))
 
 @cli.command()
 def choice():
