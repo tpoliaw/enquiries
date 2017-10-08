@@ -1,7 +1,13 @@
 from curtsies import Input, FSArray , CursorAwareWindow, fsarray
 from curtsies.fmtfuncs import red, bold, green, on_blue, yellow
 import textwrap
+import enum
 
+class Dir(enum.Enum):
+    LEFT = 1
+    RIGHT = 2
+    UP = 3
+    DOWN = 4
 
 class Document:
     def __init__(self, text='', cursor=None):
@@ -25,6 +31,18 @@ class Document:
 
     def bksp(self):
         self._lbuffer = self._lbuffer[:-1]
+
+    def move_char(self, direction=Dir.LEFT):
+        if direction == Dir.LEFT:
+            if self._lbuffer:
+                c = self._lbuffer[-1]
+                self._lbuffer = self._lbuffer[:-1]
+                self._rbuffer = c + self._rbuffer
+        elif direction == Dir.RIGHT:
+            if self._rbuffer:
+                c = self._rbuffer[0]
+                self._lbuffer += c
+                self._rbuffer = self._rbuffer[1:]
 
     @property
     def lines(self):
@@ -51,5 +69,9 @@ def prompt(msg):
                     return str(document)
                 if key == '<Esc+Ctrl-J>':
                     key = '<Ctrl-j>'
+                elif key == '<LEFT>':
+                    document.move_char(Dir.LEFT)
+                elif key == '<RIGHT>':
+                    document.move_char(Dir.RIGHT)
                 document.handle(key)
                 window.render_to_terminal(fsarray(document.lines), document.cursor)
