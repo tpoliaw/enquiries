@@ -51,7 +51,8 @@ class Document:
 
     @property
     def cursor(self):
-        return len(self._lbuffer.split('\n'))-1, len(self._lbuffer) - self._lbuffer.rfind('\n') - 1
+        lines = self._lbuffer.split('\n')
+        return len(lines)-1, len(lines[-1])
 
     def __format__(self, fmt):
         return str(self)
