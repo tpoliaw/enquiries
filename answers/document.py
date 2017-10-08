@@ -44,6 +44,27 @@ class Document:
                 self._lbuffer += c
                 self._rbuffer = self._rbuffer[1:]
 
+    def move_word(self, direction=Dir.LEFT, delete=False):
+        if direction == Dir.LEFT:
+            words = self._lbuffer.split(' ')
+            spaces = 0
+            while spaces < len(words)-1 and words[-1-spaces] == '':
+                spaces += 1
+            last_word = words[-1-spaces]
+            self._lbuffer = self._lbuffer[:-len(last_word)-spaces]
+            word = '' if delete else last_word + ' '*spaces
+            self._rbuffer = word + self._rbuffer
+        elif direction == Dir.RIGHT:
+            words = self._rbuffer.split(' ')
+            spaces = 0
+            while spaces < len(words)-1 and words[spaces] == '':
+                spaces += 1
+            first_word = words[spaces]
+            word = '' if delete else ' '*spaces + first_word
+            self._lbuffer = self._lbuffer + word
+            self._rbuffer = self._rbuffer[spaces+len(first_word):]
+
+
     @property
     def lines(self):
         # TODO: should be wrapped

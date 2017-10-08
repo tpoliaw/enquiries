@@ -62,4 +62,17 @@ def test_initial_cursor(full_doc):
     assert cursor[0] == 4
     assert cursor[1] == 43
 
+def test_jump_left_word(full_doc):
+    full_doc.move_word(answers.document.Dir.LEFT)
+    cursor = full_doc.cursor
+    assert str(full_doc) == sample_text
+    assert cursor[0] == 4
+    assert cursor[1] == 38
+
+def test_jump_right_word(full_doc):
+    full_doc.move_word(answers.document.Dir.RIGHT)
+    cursor = full_doc.cursor
+    assert str(full_doc) == sample_text
+    assert cursor[0] == 4
+    assert cursor[1] == 43
 
