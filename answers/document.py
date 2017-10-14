@@ -2,6 +2,10 @@ from curtsies import Input, FSArray , CursorAwareWindow, fsarray
 from curtsies.fmtfuncs import red, bold, green, on_blue, yellow
 import textwrap
 import enum
+import re
+
+
+WORD_BREAK = re.compile('[^\w]+')
 
 class Dir(enum.Enum):
     LEFT = 1
@@ -32,7 +36,7 @@ class Document:
     def bksp(self):
         self._lbuffer = self._lbuffer[:-1]
 
-    def move_char(self, direction=Dir.LEFT):
+    def move_cursor(self, direction=Dir.LEFT):
         if direction == Dir.LEFT:
             if self._lbuffer:
                 c = self._lbuffer[-1]
@@ -43,10 +47,28 @@ class Document:
                 c = self._rbuffer[0]
                 self._lbuffer += c
                 self._rbuffer = self._rbuffer[1:]
+        elif direction == Dir.UP:
+            split = self._lbuffer.rsplit('\n', 2)
+            if len(split) == 1:
+                return
+            left = '\n'.join((*split[:-2], split[-2][:len(split[-1])]))
+            old_len = len(self._lbuffer)
+            new_len = len(left)
+            self._lbuffer, self._rbuffer = self._lbuffer[:new_len], self._lbuffer[new_len:] + self._rbuffer
+        elif direction == Dir.DOWN:
+            rs = self._rbuffer.split('\n', 1)
+            if len(rs) == 1:
+                return
+            ls = self._lbuffer.rsplit('\n', 1)
+            lb, rb = self._lbuffer, self._rbuffer
+            self._lbuffer, self._rbuffer = (
+                    lb + rs[0] + '\n' + rs[1][:len(ls[-1])],
+                    rs[-1][len(ls[-1]):]
+            )
 
     def move_word(self, direction=Dir.LEFT, delete=False):
         if direction == Dir.LEFT:
-            words = self._lbuffer.split(' ')
+            words = WORD_BREAK.split(self._lbuffer)
             spaces = 0
             while spaces < len(words)-1 and words[-1-spaces] == '':
                 spaces += 1
@@ -55,7 +77,7 @@ class Document:
             word = '' if delete else last_word + ' '*spaces
             self._rbuffer = word + self._rbuffer
         elif direction == Dir.RIGHT:
-            words = self._rbuffer.split(' ')
+            words = WORD_BREAK.split(self._rbuffer)
             spaces = 0
             while spaces < len(words)-1 and words[spaces] == '':
                 spaces += 1
@@ -65,9 +87,9 @@ class Document:
             self._rbuffer = self._rbuffer[spaces+len(first_word):]
 
 
+
     @property
     def lines(self):
-        # TODO: should be wrapped
         return str(self).split('\n')
 
     @property
@@ -86,14 +108,27 @@ def prompt(msg):
         document = Document()
         with Input() as keys:
             for key in keys:
-                if key == '<Ctrl-j>':
+                if key == '<Ctrl-j>': # return
                     window.render_to_terminal([], (0,0))
                     return str(document)
-                if key == '<Esc+Ctrl-J>':
+                if key == '<Esc+Ctrl-J>': # alt-return
                     key = '<Ctrl-j>'
                 elif key == '<LEFT>':
-                    document.move_char(Dir.LEFT)
+                    document.move_cursor(Dir.LEFT)
                 elif key == '<RIGHT>':
-                    document.move_char(Dir.RIGHT)
+                    document.move_cursor(Dir.RIGHT)
+                elif key == '<UP>':
+                    document.move_cursor(Dir.UP)
+                elif key == '<DOWN>':
+                    document.move_cursor(Dir.DOWN)
+                elif key == '<Ctrl-LEFT>':
+                    document.move_word(Dir.LEFT)
+                elif key == '<Ctrl-RIGHT>':
+                    document.move_word(Dir.RIGHT)
+                elif key == '<Ctrl-BACKSPACE>':
+                    document.move_cursor(Dir.LEFT, delete=True)
+                elif key == '<Ctrl-DELETE>':
+                    document.move_cursor(Dir.RIGHT, delete=True)
+
                 document.handle(key)
                 window.render_to_terminal(fsarray(document.lines), document.cursor)
