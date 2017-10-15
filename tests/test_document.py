@@ -12,9 +12,6 @@ lengths.
 
 And new paragraphs also with multiple lines"""
 
-# @pytest.fixture
-# def sample_text():
-#     return sample_text
 
 @pytest.fixture
 def full_doc():
@@ -30,8 +27,6 @@ def test_add_keys(doc):
     doc.add('b')
     assert str(doc) == 'ab'
 
-def test_home(full_doc):
-    pass
 
 def test_bksp(full_doc):
     full_doc.bksp()

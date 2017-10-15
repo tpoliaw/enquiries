@@ -102,9 +102,6 @@ class Document:
         lines = self._lbuffer.split('\n')
         return len(lines)-1, len(lines[-1])
 
-    def __format__(self, fmt):
-        return str(self)
-
     def __str__(self):
         return self._lbuffer+self._rbuffer
 
