@@ -1,11 +1,15 @@
 from curtsies import Input, FSArray , CursorAwareWindow, fsarray
 from curtsies.fmtfuncs import red, bold, green, on_blue, yellow
 import textwrap
+from collections import namedtuple
 import enum
 import re
 
 
 WORD_BREAK = re.compile('[^\w]+')
+
+Cursor = namedtuple('Cursor', ['row', 'column'])
+
 
 class Dir(enum.Enum):
     LEFT = 1
@@ -100,7 +104,7 @@ class Document:
     @property
     def cursor(self):
         lines = self._lbuffer.split('\n')
-        return len(lines)-1, len(lines[-1])
+        return Cursor(len(lines)-1, len(lines[-1]))
 
     def __str__(self):
         return self._lbuffer+self._rbuffer
