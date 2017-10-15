@@ -27,14 +27,19 @@ class Document:
             self.add(' ')
         elif key == '<BACKSPACE>':
             self.bksp()
+        elif key == '<DELETE>':
+            self.bksp(Dir.RIGHT)
         elif key == '<Ctrl-j>':
             self.add('\n')
 
     def add(self, key):
         self._lbuffer += key
 
-    def bksp(self):
-        self._lbuffer = self._lbuffer[:-1]
+    def bksp(self, direction=Dir.LEFT):
+        if direction == Dir.LEFT:
+            self._lbuffer = self._lbuffer[:-1]
+        elif direction == Dir.RIGHT:
+            self._rbuffer = self._rbuffer[1:]
 
     def move_cursor(self, direction=Dir.LEFT):
         if direction == Dir.LEFT:
