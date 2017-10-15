@@ -61,14 +61,14 @@ class Document:
             new_len = len(left)
             self._lbuffer, self._rbuffer = self._lbuffer[:new_len], self._lbuffer[new_len:] + self._rbuffer
         elif direction == Dir.DOWN:
-            rs = self._rbuffer.split('\n', 1)
+            rs = self._rbuffer.split('\n', 2)
             if len(rs) == 1:
                 return
             ls = self._lbuffer.rsplit('\n', 1)
-            lb, rb = self._lbuffer, self._rbuffer
+            indent = len(ls[-1])
             self._lbuffer, self._rbuffer = (
-                    lb + rs[0] + '\n' + rs[1][:len(ls[-1])],
-                    rs[-1][len(ls[-1]):]
+                    self._lbuffer + rs[0] + '\n' + rs[1][:indent],
+                    '\n'.join((rs[1][indent:], *rs[2:]))
             )
 
     def move_word(self, direction=Dir.LEFT, delete=False):
