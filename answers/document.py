@@ -1,4 +1,5 @@
-from curtsies import Input, FSArray , CursorAwareWindow, fsarray
+from curtsies import Input, FSArray, CursorAwareWindow, fsarray
+from curtsies.events import PasteEvent
 from curtsies.fmtfuncs import red, bold, green, on_blue, yellow
 import textwrap
 from collections import namedtuple
@@ -135,6 +136,9 @@ def prompt(msg):
                     document.move_word(Dir.LEFT, delete=True)
                 elif key == '<Ctrl-DELETE>':
                     document.move_word(Dir.RIGHT, delete=True)
+                elif isinstance(key, PasteEvent):
+                    for c in key.events:
+                        document.handle(c)
                 else:
                     document.handle(key)
                 window.render_to_terminal(fsarray(document.lines), document.cursor)
