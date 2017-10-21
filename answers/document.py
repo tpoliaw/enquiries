@@ -118,7 +118,7 @@ def prompt(msg):
                     window.render_to_terminal([], (0,0))
                     return str(document)
                 if key == '<Esc+Ctrl-J>': # alt-return
-                    key = '<Ctrl-j>'
+                    document.handle('<Ctrl-j>')
                 elif key == '<LEFT>':
                     document.move_cursor(Dir.LEFT)
                 elif key == '<RIGHT>':
@@ -135,5 +135,6 @@ def prompt(msg):
                     document.move_word(Dir.LEFT, delete=True)
                 elif key == '<Ctrl-DELETE>':
                     document.move_word(Dir.RIGHT, delete=True)
-                document.handle(key)
+                else:
+                    document.handle(key)
                 window.render_to_terminal(fsarray(document.lines), document.cursor)
