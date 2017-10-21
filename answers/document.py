@@ -131,10 +131,9 @@ def prompt(msg):
                     document.move_word(Dir.LEFT)
                 elif key == '<Ctrl-RIGHT>':
                     document.move_word(Dir.RIGHT)
-                elif key == '<Ctrl-BACKSPACE>':
-                    document.move_cursor(Dir.LEFT, delete=True)
+                elif key == '<Ctrl-w>':
+                    document.move_word(Dir.LEFT, delete=True)
                 elif key == '<Ctrl-DELETE>':
-                    document.move_cursor(Dir.RIGHT, delete=True)
-
+                    document.move_word(Dir.RIGHT, delete=True)
                 document.handle(key)
                 window.render_to_terminal(fsarray(document.lines), document.cursor)
