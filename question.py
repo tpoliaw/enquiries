@@ -3,6 +3,7 @@
 
 from answers import prompts
 from answers import document
+from answers import yesno
 import click
 
 @click.group()
@@ -20,6 +21,10 @@ def choice():
 @cli.command()
 def single():
     click.echo(prompts.choice('Pick a number', [1234, 4238, 43230, 209348], multi=False))
+
+@cli.command()
+def confirm():
+    click.echo(yesno.confirm('Continue with foo?: '))
 
 if __name__ == "__main__":
     cli()
