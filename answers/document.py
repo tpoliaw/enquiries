@@ -113,7 +113,10 @@ class Document:
 
 def prompt(msg):
     with CursorAwareWindow(extra_bytes_callback=lambda x:x, hide_cursor=False) as window:
+        prompt = textwrap.wrap(msg+'\n', window.width)
+        p_lines = len(prompt)
         document = Document()
+        window.render_to_terminal(fsarray(prompt+['']), (1,0))
         with Input() as keys:
             for key in keys:
                 if key == '<Ctrl-j>': # return
@@ -142,8 +145,9 @@ def prompt(msg):
                         document.handle(c)
                 else:
                     document.handle(key)
-                text = document.lines
-                lines, cursor = _wrap(text, document.cursor, window.width)
+                text = prompt + document.lines
+                r, c = document.cursor
+                lines, cursor = _wrap(text, Cursor(r+p_lines, c), window.width)
                 window.render_to_terminal(fsarray(lines), cursor)
 
 def _wrap(text, cursor, width):
