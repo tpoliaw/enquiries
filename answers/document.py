@@ -2,6 +2,7 @@ from curtsies import Input, FSArray, CursorAwareWindow, fsarray
 from curtsies.events import PasteEvent
 from curtsies.fmtfuncs import red, bold, green, on_blue, yellow
 import textwrap
+import itertools
 from collections import namedtuple
 import enum
 import re
@@ -141,4 +142,27 @@ def prompt(msg):
                         document.handle(c)
                 else:
                     document.handle(key)
-                window.render_to_terminal(fsarray(document.lines), document.cursor)
+                text = document.lines
+                lines, cursor = _wrap(text, document.cursor, window.width)
+                window.render_to_terminal(fsarray(lines), cursor)
+
+def _wrap(text, cursor, width):
+    """Convert an iterable of lines to an iterable of wrapped lines"""
+    text = [textwrap.wrap(line, width, drop_whitespace=False) or [''] for line in text]
+    # logger.debug('wrapped lines: %s', text)
+    previous_lines = sum(len(line) for line in text[:cursor.row])
+    current_line = text[cursor.row]
+    row, column = _current_word(current_line, cursor.column)
+    row += previous_lines
+    return itertools.chain(*text), Cursor(row, column)
+
+def _current_word(words, column):
+    if column == 0: return 0,0
+    count = 0
+    for i, w in enumerate(words):
+        end = count + len(w)
+        if column <= end:
+            return (i, column-count)
+        count += len(w)
+    else:
+        raise ValueError('column %d is not in words (%s)' %(column, words))
