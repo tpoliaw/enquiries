@@ -1,10 +1,10 @@
 import pytest
-from answers import prompts
+from answers import choices
 
 @pytest.fixture
 def clist():
     import answers
-    cl = answers.prompts.ChoiceList(['abcd', 'efgh', 'ijkl'])
+    cl = answers.choices.ChoiceList(['abcd', 'efgh', 'ijkl'])
     return cl
 
 def test_list_length(clist):
@@ -41,5 +41,5 @@ def test_reverse(clist):
 
 def test_no_choices():
     with pytest.raises(ValueError):
-        prompts.ChoiceList([])
+        choices.ChoiceList([])
 
