@@ -113,10 +113,14 @@ class Document:
 
 def prompt(msg):
     with CursorAwareWindow(extra_bytes_callback=lambda x:x, hide_cursor=False) as window:
-        prompt = textwrap.wrap(msg+'\n', window.width)
+        L, R = window.width//3 -1, window.width - window.width//3
+        prompt = textwrap.wrap(msg+'\n', L)
         p_lines = len(prompt)
         document = Document()
-        window.render_to_terminal(fsarray(prompt+['']), (1,0))
+        prompt_array = fsarray(prompt+[''])
+        view = FSArray(p_lines, window.width)
+        view[0:p_lines, 0:L] = prompt
+        window.render_to_terminal(view, (0, L+1))
         with Input() as keys:
             for key in keys:
                 if key == '<Ctrl-j>': # return
@@ -145,10 +149,12 @@ def prompt(msg):
                         document.handle(c)
                 else:
                     document.handle(key)
-                text = prompt + document.lines
+                text = document.lines
                 r, c = document.cursor
-                lines, cursor = _wrap(text, Cursor(r+p_lines, c), window.width)
-                window.render_to_terminal(fsarray(lines), cursor)
+                lines, cursor = _wrap(text, Cursor(r,c), R)
+                l = list(lines)
+                view[0:len(l), L+1:window.width] = l
+                window.render_to_terminal(view, (cursor.row, cursor.column+L+1))
 
 def _wrap(text, cursor, width):
     """Convert an iterable of lines to an iterable of wrapped lines"""
