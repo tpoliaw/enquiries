@@ -6,6 +6,7 @@ import itertools
 from collections import namedtuple
 import enum
 import re
+blank = re.compile(r'^\s+')
 
 
 WORD_BREAK = re.compile('[^\w]')
@@ -113,14 +114,15 @@ class Document:
 
 def prompt(msg):
     with CursorAwareWindow(extra_bytes_callback=lambda x:x, hide_cursor=False) as window:
-        L, R = window.width//3 -1, window.width - window.width//3
-        prompt = textwrap.wrap(msg+'\n', L)
+        left = window.width//3 -1
+        prompt = textwrap.wrap(msg+'\n', left)
         p_lines = len(prompt)
+        right = window.width - max(len(line) for line in prompt) - 1
+        left = window.width - right - 1
         document = Document()
-        prompt_array = fsarray(prompt+[''])
         view = FSArray(p_lines, window.width)
-        view[0:p_lines, 0:L] = prompt
-        window.render_to_terminal(view, (0, L+1))
+        view[0:p_lines, 0:left] = prompt
+        window.render_to_terminal(view, (0, left+1))
         with Input() as keys:
             for key in keys:
                 if key == '<Ctrl-j>': # return
@@ -149,12 +151,14 @@ def prompt(msg):
                         document.handle(c)
                 else:
                     document.handle(key)
-                text = document.lines
-                r, c = document.cursor
-                lines, cursor = _wrap(text, Cursor(r,c), R)
-                l = list(lines)
-                view[0:len(l), L+1:window.width] = l
-                window.render_to_terminal(view, (cursor.row, cursor.column+L+1))
+
+                # Add an extra blank line to force clearing of trailing text
+                text = document.lines + [' ']
+                lines, cursor = _wrap(text, document.cursor, right)
+                rows = list(lines)
+                # Replace the right column with input text
+                view[0:len(rows), left+1:window.width] = rows
+                window.render_to_terminal(view, (cursor.row, cursor.column+left+1))
 
 def _wrap(text, cursor, width):
     """Convert an iterable of lines to an iterable of wrapped lines"""
@@ -164,14 +168,25 @@ def _wrap(text, cursor, width):
     current_line = text[cursor.row]
     row, column = _current_word(current_line, cursor.column)
     row += previous_lines
+    # If the column is the last of the line, move to the next
+    if column:
+        q, r = divmod(column, len(current_line[0]))
+        logger.info('q = %d, r = %d', q, r)
+        row += q
+        column = r
     return itertools.chain(*text), Cursor(row, column)
 
 def _current_word(words, column):
-    if column == 0: return 0,0
     count = 0
     for i, w in enumerate(words):
+        m = blank.match(w)
+        if m:
+            count -= m.span()[1]
+            column -= m.span()[1]
+        if column == 0: return 0,0
+        w = w.lstrip()
         end = count + len(w)
-        if column <= end:
+        if column < end:
             return (i, column-count)
         count += len(w)
     else:
