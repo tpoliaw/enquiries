@@ -78,6 +78,22 @@ class Document:
                     '\n'.join((rs[1][indent:], *rs[2:]))
             )
 
+    def end_line(self, right):
+        if right: # move to end of line
+            line_break = self._rbuffer.find('\n')
+            if line_break == -1:
+                self._lbuffer, self._rbuffer = self._lbuffer + self._rbuffer, ''
+                return
+            for _ in range(line_break):
+                self.move_cursor(Dir.RIGHT)
+        else: # move to start of line
+            line_break = self._lbuffer.rfind('\n')
+            if line_break == -1:
+                self._lbuffer, self._rbuffer = '', self._lbuffer + self._rbuffer
+                return
+            for _ in range(len(self._lbuffer) - line_break - 1):
+                self.move_cursor(Dir.LEFT)
+
     def move_word(self, direction=Dir.LEFT, delete=False):
         if direction == Dir.LEFT:
             words = WORD_BREAK.split(self._lbuffer)
@@ -146,6 +162,10 @@ def prompt(msg):
                     document.move_word(Dir.LEFT, delete=True)
                 elif key == '<Ctrl-DELETE>':
                     document.move_word(Dir.RIGHT, delete=True)
+                elif key in ('<Ctrl-a>', '<HOME>'):
+                    document.end_line(0)
+                elif key in ('<Ctrl-e>', '<END>'):
+                    document.end_line(1)
                 elif isinstance(key, PasteEvent):
                     for c in key.events:
                         document.handle(c)
