@@ -4,25 +4,44 @@
 from answers import choose
 from answers import document
 from answers import yesno
+import sys
 import click
 
 @click.group()
 def cli():
     pass
 
-@cli.command()
-@click.argument('prompt', nargs=-1)
-def free(prompt):
-    prompt = prompt[0] if prompt else 'enter text: '
-    click.echo(document.prompt(prompt))
 
 @cli.command()
-def choice():
-    click.echo(choose('Choose an option', ['option 1', 'option 2', 'option 3']))
+@click.option('-p', '--prompt', default='enter text: ')
+@click.option('-q', '--quiet', is_flag=True)
+def free(prompt, quiet):
+    user_input = document.prompt(prompt)
+    # If we're not being quiet and stdout is not being redirected, write the prompt
+    if not quiet and sys.stdout.isatty():
+        click.echo(prompt, err=True)
+    # always print the output
+    click.echo(user_input)
+
 
 @cli.command()
-def single():
-    click.echo(choose('Pick a number', [1234, 4238, 43230, 209348], multi=False))
+@click.option('-m', '--multiple-choice', is_flag=True, help='User can choose multiple options')
+@click.option('-p', '--prompt', help='The message to display to the user')
+@click.option('-q', '--quiet', is_flag=True, help='Clear the prompt after accepting choice')
+@click.argument('options', nargs=-1)
+def select(multiple_choice, quiet, prompt, options):
+    choice = choose(prompt, options, multi=multiple_choice)
+    # if not quiet, print everything
+    if not quiet:
+        click.echo(prompt + ' ', err=True, nl=multiple_choice)
+    # if we're being piped to somewhere else, always print choice
+    if not quiet or not sys.stdout.isatty():
+        if multiple_choice:
+            # on multiple lines for multiple choices
+            click.echo('\n'.join(choice))
+        else:
+            click.echo(choice)
+
 
 @cli.command()
 @click.option('-q', '--quiet', is_flag=True, help='Hide the prompt and response after accepting')

@@ -1,6 +1,7 @@
 from curtsies import Input, FSArray, CursorAwareWindow, fsarray
 from curtsies.events import PasteEvent
 from curtsies.fmtfuncs import red, bold, green, on_blue, yellow
+import sys
 import textwrap
 import itertools
 from collections import namedtuple
@@ -128,7 +129,7 @@ class Document:
         return self._lbuffer+self._rbuffer
 
 def prompt(msg):
-    with CursorAwareWindow(extra_bytes_callback=lambda x:x, hide_cursor=False) as window:
+    with CursorAwareWindow(out_stream=sys.stderr, extra_bytes_callback=lambda x:x, hide_cursor=False) as window:
         left = window.width//3 -1
         prompt = textwrap.wrap(msg, left) + ['']
         p_lines = len(prompt)

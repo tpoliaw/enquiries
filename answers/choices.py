@@ -1,3 +1,4 @@
+import sys
 from curtsies import Input, FSArray , CursorAwareWindow, fsarray
 from curtsies.fmtfuncs import red, bold, green, on_blue, yellow
 
@@ -11,7 +12,7 @@ def _no_fmt(s):
 
 def choose(prompt, choices, multi=True):
     choice_list = ChoiceList(choices, prompt=prompt, multi=multi)
-    with CursorAwareWindow(extra_bytes_callback=lambda x: x) as window:
+    with CursorAwareWindow(out_stream=sys.stderr, extra_bytes_callback=lambda x: x) as window:
         options = choice_list.run(window)
 
     return options
