@@ -25,8 +25,12 @@ def single():
     click.echo(choose('Pick a number', [1234, 4238, 43230, 209348], multi=False))
 
 @cli.command()
-def confirm():
-    click.echo(yesno.confirm('Continue with foo?: '))
+@click.option('-q', '--quiet', is_flag=True, help='Hide the prompt and response after accepting')
+@click.option('-y', '--default-true', is_flag=True, help='Expect true by default (if no choice is made)')
+@click.option('-p', '--prompt', default='Continue', help='The prompt to display')
+def confirm(default_true, quiet, prompt):
+    """Prompt user for a yes/no response"""
+    exit(not yesno.confirm(prompt, single_key=True, default=default_true, clear=quiet))
 
 if __name__ == "__main__":
     cli()
