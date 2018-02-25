@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from answers import choose
-from answers import document
+from answers import freetext
 from answers import yesno
 import sys
 import click
@@ -16,7 +16,7 @@ def cli():
 @click.option('-p', '--prompt', default='enter text: ')
 @click.option('-q', '--quiet', is_flag=True)
 def free(prompt, quiet):
-    user_input = document.prompt(prompt)
+    user_input = freetext(prompt)
     # If we're not being quiet and stdout is not being redirected, write the prompt
     if not quiet and sys.stdout.isatty():
         click.secho(prompt, err=True, bold=True)

@@ -1,4 +1,4 @@
-from answers import Document
+from answers.document import Document
 from answers import document
 import pytest
 from unittest import mock
