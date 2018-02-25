@@ -1,6 +1,6 @@
-__pycache__/
-**.pyc
-*$py.class
+**/__pycache__
+**/*.pyc
+**/*$py.class
 
 # Sphinx docs
 docs/build # if source/build are separate
