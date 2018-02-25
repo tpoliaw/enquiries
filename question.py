@@ -11,8 +11,10 @@ def cli():
     pass
 
 @cli.command()
-def free():
-    click.echo(document.prompt('enter text:'))
+@click.argument('prompt', nargs=-1)
+def free(prompt):
+    prompt = prompt[0] if prompt else 'enter text: '
+    click.echo(document.prompt(prompt))
 
 @cli.command()
 def choice():

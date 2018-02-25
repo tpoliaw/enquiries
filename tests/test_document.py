@@ -151,15 +151,15 @@ def text():
 
 def test_wrap(text):
     print(text)
-    lines, cursor = document._wrap(text, document.Cursor(0, len(text[0])), 15)
+    lines, cursor = document._wrap(text, document.Cursor(0, len(text[0])), 16)
     print(cursor)
-    assert list(lines) == ['this is a ', 'single line ', 'that should be ', 'split over many', ' lines when ', 'wrapped']
+    assert list(lines) == ['this is a ', 'single line ', 'that should be ', 'split over many', 'lines when ', 'wrapped']
     assert cursor.row == 5
-    assert cursor.column == 7
+    assert cursor.column == 6
 
 def test_split_line_wrap(text):
-    lines, cursor = document._wrap(text, document.Cursor(0, 30), 15)
-    assert list(lines) == ['this is a ', 'single line ', 'that should be ', 'split over many', ' lines when ', 'wrapped']
+    lines, cursor = document._wrap(text, document.Cursor(0, 30), 16)
+    assert list(lines) == ['this is a ', 'single line ', 'that should be ', 'split over many', 'lines when ', 'wrapped']
     assert cursor.row == 2
     assert cursor.column == 8
 
