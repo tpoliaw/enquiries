@@ -48,17 +48,17 @@ class Document:
         elif direction == Dir.RIGHT:
             self._rbuffer = self._rbuffer[1:]
 
-    def move_cursor(self, direction=Dir.LEFT):
+    def move_cursor(self, direction=Dir.LEFT, chars=1):
         if direction == Dir.LEFT:
             if self._lbuffer:
-                c = self._lbuffer[-1]
-                self._lbuffer = self._lbuffer[:-1]
+                c = self._lbuffer[-chars:]
+                self._lbuffer = self._lbuffer[:-chars]
                 self._rbuffer = c + self._rbuffer
         elif direction == Dir.RIGHT:
             if self._rbuffer:
-                c = self._rbuffer[0]
+                c = self._rbuffer[:chars]
                 self._lbuffer += c
-                self._rbuffer = self._rbuffer[1:]
+                self._rbuffer = self._rbuffer[chars:]
         elif direction == Dir.UP:
             split = self._lbuffer.rsplit('\n', 2)
             if len(split) == 1:
@@ -84,15 +84,14 @@ class Document:
             if line_break == -1:
                 self._lbuffer, self._rbuffer = self._lbuffer + self._rbuffer, ''
                 return
-            for _ in range(line_break):
-                self.move_cursor(Dir.RIGHT)
+            self.move_cursor(Dir.RIGHT, line_break)
         else: # move to start of line
             line_break = self._lbuffer.rfind('\n')
             if line_break == -1:
                 self._lbuffer, self._rbuffer = '', self._lbuffer + self._rbuffer
                 return
-            for _ in range(len(self._lbuffer) - line_break - 1):
-                self.move_cursor(Dir.LEFT)
+            to_move =len(self._lbuffer) - line_break - 1
+            self.move_cursor(Dir.LEFT, to_move)
 
     def move_word(self, direction=Dir.LEFT, delete=False):
         if direction == Dir.LEFT:
