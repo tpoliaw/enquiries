@@ -19,7 +19,7 @@ def free(prompt, quiet):
     user_input = document.prompt(prompt)
     # If we're not being quiet and stdout is not being redirected, write the prompt
     if not quiet and sys.stdout.isatty():
-        click.echo(prompt, err=True)
+        click.secho(prompt, err=True, bold=True)
     # always print the output
     click.echo(user_input)
 
@@ -32,8 +32,8 @@ def free(prompt, quiet):
 def select(multiple_choice, quiet, prompt, options):
     choice = choose(prompt, options, multi=multiple_choice)
     # if not quiet, print everything
-    if not quiet:
-        click.echo(prompt + ' ', err=True, nl=multiple_choice)
+    if not quiet and prompt:
+        click.secho(prompt + ' ', err=True, nl=multiple_choice, bold=True)
     # if we're being piped to somewhere else, always print choice
     if not quiet or not sys.stdout.isatty():
         if multiple_choice:

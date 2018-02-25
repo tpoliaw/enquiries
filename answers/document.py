@@ -137,7 +137,7 @@ def prompt(msg):
         left = window.width - right - 1
         document = Document()
         view = FSArray(p_lines, window.width)
-        view[0:p_lines, 0:left] = prompt
+        view[0:p_lines, 0:left] = [bold(line) for line in prompt]
         window.render_to_terminal(view, (0, left+1))
         with Input() as keys:
             for key in keys:

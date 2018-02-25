@@ -33,7 +33,7 @@ class Choice:
 class ChoiceList:
     def __init__(self, choices, prompt=None, multi=False, sel_fmt=bold, des_fmt=_no_fmt, selected=CHECKED, deselected=UNCHECKED):
         if prompt:
-            self._prompt = fsarray(prompt.split('\n'))
+            self._prompt = fsarray([bold(line) for line in prompt.split('\n')])
         else:
             self._prompt = prompt
         if multi is True:
