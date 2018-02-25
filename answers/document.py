@@ -131,7 +131,7 @@ class Document:
 def prompt(msg):
     with CursorAwareWindow(extra_bytes_callback=lambda x:x, hide_cursor=False) as window:
         left = window.width//3 -1
-        prompt = textwrap.wrap(msg+'\n', left)
+        prompt = textwrap.wrap(msg, left) + ['']
         p_lines = len(prompt)
         right = window.width - max(len(line) for line in prompt) - 1
         left = window.width - right - 1
@@ -180,34 +180,38 @@ def prompt(msg):
                 view[0:len(rows), left+1:window.width] = rows
                 window.render_to_terminal(view, (cursor.row, cursor.column+left+1))
 
+
 def _wrap(text, cursor, width):
     """Convert an iterable of lines to an iterable of wrapped lines"""
-    text = [textwrap.wrap(line, width, drop_whitespace=False) or [''] for line in text]
-    # logger.debug('wrapped lines: %s', text)
+    text = [textwrap.wrap(line, width - 1, drop_whitespace=False) or [''] for line in text]
     previous_lines = sum(len(line) for line in text[:cursor.row])
     current_line = text[cursor.row]
     row, column = _current_word(current_line, cursor.column)
+    if column < 0:
+        row = max(0, row-1)
+        column = width
+    text[cursor.row] = [line.lstrip() for line in current_line]
     row += previous_lines
-    # If the column is the last of the line, move to the next
-    if column:
-        q, r = divmod(column, len(current_line[0]))
-        logger.info('q = %d, r = %d', q, r)
-        row += q
-        column = r
     return itertools.chain(*text), Cursor(row, column)
+
 
 def _current_word(words, column):
     count = 0
+    lines = len(words)
     for i, w in enumerate(words):
+        # Leading whitespace
         m = blank.match(w)
         if m:
-            count -= m.span()[1]
             column -= m.span()[1]
-        if column == 0: return 0,0
-        w = w.lstrip()
+        if column == 0:
+            return 0,0
         end = count + len(w)
         if column < end:
             return (i, column-count)
+        if column == end:
+            if i == lines - 1: # end of last line
+                return i, column - count
+            return i+1, 0
         count += len(w)
     else:
         raise ValueError('column %d is not in words (%s)' %(column, words))
