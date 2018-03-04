@@ -1,18 +1,18 @@
-Answers
+Enquiries
 =========
 
-``Answers`` aims to provide a straightforward way to get decisions from your users.
+``enquiries`` aims to provide a straightforward way to get decisions from your users.
 It can offer multiple choice, yes/no or free text
 
 .. code-block:: python
 
-    import answers
+    import enquiries
 
     options = ['thing 1', 'thing 2', 'thing 3']
-    choice = answers.choose('Choose one of these options: ', options)
+    choice = enquiries.choose('Choose one of these options: ', options)
 
-    if answers.confirm('Do you want to write something?'):
-        text = answers.freetext('Write something interesting: ')
+    if enquiries.confirm('Do you want to write something?'):
+        text = enquiries.freetext('Write something interesting: ')
         print(text)
 
 Input for these questions is fully interactive and prevents any incorrect
@@ -25,7 +25,7 @@ directly.
 
 Multiple choice
 ---------------
-All choices consist of letting users pick on of several items. For ``answers`` these
+All choices consist of letting users pick on of several items. For ``enquiries`` these
 can be in any iterable.
 
 Users can pick one or many of the options offered to them.
@@ -37,7 +37,8 @@ For single choice, use the ``choose`` method with the list of choices.
 
 .. code-block:: python
 
-    >>> response = answers.choose('Pick a thing', options)
+    >>> options = ['Thing 1', 'Thing 2']
+    >>> response = enquiries.choose('Pick a thing', options)
     # interactive prompt
     >>> print('You chose "{}"'.format(response))
     You chose "Thing 1"
@@ -63,7 +64,7 @@ be used.
 .. code-block:: python
 
     >>> options = ['Thing 1', 'Thing 2', 'Thing 3']
-    >>> response = answers.choose('Pick some things', options, multi=True)
+    >>> response = enquiries.choose('Pick some things', options, multi=True)
     # interactive prompt
     >>> print('You chose "{}"'.format(response))
     You chose "['Thing1', 'Thing 3']"
@@ -86,7 +87,7 @@ Used to get a simple boolean response from users.
 
 .. code-block:: python
 
-    >>> if answers.confirm('Do you really want to do the thing')
+    >>> if enquiries.confirm('Do you really want to do the thing')
     ...     print('Carrying on')
     ... else:
     ...     print('Exiting')
@@ -108,14 +109,14 @@ can be used to remove the need to hit return.
 
 Freetext
 --------
-``Answers`` free text offering is offers a slightly enhanced version of the
+``enquiries`` free text offering is offers a slightly enhanced version of the
 ``raw_input`` builtin function. It adds multi line support as well as basic
 readline like controls (``Ctrl-a``, ``Ctrl-w`` etc). The text entry area is also cleared after the text is
 accepted keeping terminal history clean.
 
 .. code-block:: python
 
-    >>> text = answers.freetext('Write some stuff')
+    >>> text = enquiries.freetext('Write some stuff')
     >>> print(text)
     This is the text you entered
     on many lines

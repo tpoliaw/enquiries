@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from answers import choose
-from answers import freetext
-from answers import yesno
+from enquiries import choose
+from enquiries import freetext
+from enquiries import yesno
 import sys
 import click
 

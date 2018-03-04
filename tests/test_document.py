@@ -1,5 +1,5 @@
-from answers.document import Document
-from answers import document
+from enquiries.document import Document
+from enquiries import document
 import pytest
 from unittest import mock
 

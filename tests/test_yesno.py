@@ -1,4 +1,4 @@
-from answers import yesno
+from enquiries import yesno
 
 def test_keys():
     assert yesno._keys('y', 'n', True) == ' [Y/n]'

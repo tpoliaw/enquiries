@@ -1,10 +1,9 @@
 import pytest
-from answers import choices
+from enquiries import choices
 
 @pytest.fixture
 def clist():
-    import answers
-    cl = answers.choices.ChoiceList(['abcd', 'efgh', 'ijkl'])
+    cl = choices.ChoiceList(['abcd', 'efgh', 'ijkl'])
     return cl
 
 def test_list_length(clist):
