@@ -10,7 +10,7 @@ UNCHECKED = '\u25cc '
 def _no_fmt(s):
     return s
 
-def choose(prompt, choices, multi=True):
+def choose(prompt, choices, multi=False):
     choice_list = ChoiceList(choices, prompt=prompt, multi=multi)
     with CursorAwareWindow(out_stream=sys.stderr, extra_bytes_callback=lambda x: x) as window:
         options = choice_list.run(window)
