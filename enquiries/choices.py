@@ -18,11 +18,14 @@ def choose(prompt, choices, multi=False):
     return options
 
 class Choice:
-    def __init__(self, obj):
+    def __init__(self, obj, display=None):
         self._obj = obj
+        self._disp = display
 
     def __str__(self):
-        return str(self._obj)
+        if self._disp is None:
+            self._disp = str(self._obj)
+        return self._disp
 
     def render(self, fmt, width):
         lines = str(self).split('\n')
@@ -41,7 +44,10 @@ class ChoiceList:
         self._multi = multi
         if not choices:
             raise ValueError('No choices given')
-        self._choices = [[False, Choice(c)] for c in choices]
+        if isinstance(choices, dict):
+            self._choices = [[False, Choice(v, k)] for k, v in choices.items()]
+        else:
+            self._choices = [[False, Choice(c)] for c in choices]
         self._sel_fmt = sel_fmt
         self._des_fmt = des_fmt
         self._sel = selected
@@ -123,4 +129,4 @@ class ChoiceList:
 
 
 if __name__ == "__main__":
-    c = choice('Prompt \n line 3: ', ['abc', 'def', 'ghi', 'jkl', 'mno'])
+    c = choose('Prompt \n line 2: ', ['abc', 'def', 'ghi', 'jkl', 'mno'])
