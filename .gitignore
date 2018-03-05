@@ -2,6 +2,11 @@
 **/*.pyc
 **/*$py.class
 
+# pypi build files
+build/
+dist/
+*.egg-info/
+
 # Sphinx docs
 docs/build # if source/build are separate
 docs/_build # if not
