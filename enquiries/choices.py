@@ -11,6 +11,55 @@ def _no_fmt(s):
     return s
 
 def choose(prompt, choices, multi=False):
+    """
+    Offer a range of options to the user and return their selection
+
+    Args
+    ----
+    prompt : str
+        The prompt to display to the users above the options
+    choices : iterable
+        The range of choices to offer to the user.
+
+        * If this is a ``dict`` type, the ``__str__`` representation of the keys
+          are displayed to the user and the corresponding values are returned.
+        * Otherwise, the ``__str__`` representation of each option is
+          displayed and the original objects are returned.
+
+    Keyword Args
+    ------------
+    multi : bool
+        Whether the user can choose multiple options
+        Defaults to False
+    Returns
+    -------
+        object
+            If multi is ``False``, return the selected option.
+            The returned object is the same instance as that passed in.
+        list
+            If multi is ``True``, return a list of the users choices. This
+            may be an empty list if no choices are made.
+            The instances are the same as those passed in.
+
+    Raises
+    ------
+        ValueError
+            If the list of options is ``None`` or empty
+    Examples
+    --------
+    Using a list of options and picking one:
+
+        >>> options = ['Option %d' %i for i in range(10)]
+        >>> choose('Choose an option', options)
+        'Option 3'
+
+    Using a dict of options and picking several
+
+        >>> options = {'One': 1, 'Two': 2, 'Three': 3}
+        >>> choose('Choose multiple options', options, multi=True)
+        [1, 2]
+    """
+
     choice_list = ChoiceList(choices, prompt=prompt, multi=multi)
     with CursorAwareWindow(out_stream=sys.stderr, extra_bytes_callback=lambda x: x) as window:
         options = choice_list.run(window)

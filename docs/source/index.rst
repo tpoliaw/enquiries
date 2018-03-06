@@ -1,14 +1,20 @@
-.. Answers documentation master file, created by
-   sphinx-quickstart on Sat Sep 30 18:27:16 2017.
+.. Enquiries documentation master file, created by
+   sphinx-quickstart on Mon Mar  5 15:41:50 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Answers's documentation!
-===================================
+Enquiries
+=========
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   why_enquiries
+   quickstart
+   multiple_choice
+   confirm
+   freetext
 
 
 

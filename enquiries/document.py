@@ -128,10 +128,26 @@ class Document:
     def __str__(self):
         return self._lbuffer+self._rbuffer
 
-def prompt(msg):
+def prompt(message):
+    """
+    Request text input from the user
+
+    Args
+    ----
+    message : str
+        The prompt to display to the user
+    Returns
+    -------
+    str
+        The text entered by the user
+    Examples
+    --------
+        >>> prompt('Enter some text:')
+        'This text was entered'
+    """
     with CursorAwareWindow(out_stream=sys.stderr, extra_bytes_callback=lambda x:x, hide_cursor=False) as window:
         left = window.width//3 -1
-        prompt = textwrap.wrap(msg, left) + ['']
+        prompt = textwrap.wrap(message, left) + ['']
         p_lines = len(prompt)
         right = window.width - max(len(line) for line in prompt) - 1
         left = window.width - right - 1
