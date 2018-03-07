@@ -109,3 +109,12 @@ The prompt is interactive using the arrow keys to select the option directly.
 
 It is just as easy to choose multiple options from a list as well
 
+Acknowledgments
+---------------
+
+This package has very few dependencies, but I would like to thank
+Thomas Ballinger both for his excellent
+`Curtsies <https://github.com/bpython/curtsies>`_
+library that this uses and for his talk on
+`Terminal Whispering <https://www.youtube.com/watch?v=rSnMoClPH2E>`_
+for explaining the non-standard use of the terminal in a clear way.
