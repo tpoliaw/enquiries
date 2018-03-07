@@ -46,6 +46,25 @@ To install directly from source (to get nightly/master versions)
 Usage
 -----
 
+From the command line
+~~~~~~~~~~~~~~~~~~~~~
+
+This library is callable directly from the command line using the
+``python -m`` syntax::
+
+   $ python -m enquiries confirm -p 'Do you want to continue?'
+   Do you want to continue? [y/N]
+
+The exit code is 0 if ``yes``, or 1 if ``no``. This lets it be composed
+with other commands::
+
+    $ python -m enquiries confirm -p 'Are you sure?' && echo helloWorld
+
+With the second command only being run if the user agrees.
+
+From Python
+~~~~~~~~~~~
+
 Enquiries is a very simple package currently containing only three functions.
 
 .. code-block:: python
@@ -56,7 +75,7 @@ Enquiries is a very simple package currently containing only three functions.
    ['choose', 'confirm', 'freetext']
 
 Multiple Choice
-~~~~~~~~~~~~~~~
+***************
 
 Multiple choice is offered through the ``choose`` method.
 
@@ -76,7 +95,7 @@ There are also keyword arguments to enable accepting multiple options,
 to pass alternative display values etc
 
 Confirm
-~~~~~~~
+*******
 
 Getting a True/False value is available from the ``confirm`` choice
 
@@ -91,7 +110,7 @@ Additional settings are available to change the keys for yes/no,
 set the default choice etc.
 
 Freetext
-~~~~~~~~
+********
 
 Freetext input is available through the ``freetext`` function.
 This method is an extension of the builtin ``input`` method.
