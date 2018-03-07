@@ -22,10 +22,11 @@ directly.
 
 .. image:: https://asciinema.org/a/6OyuQH9H03vSP2gf79f0KwaCO.png
    :target: https://asciinema.org/a/6OyuQH9H03vSP2gf79f0KwaCO
+   :width: 80%
 
 Multiple choice
 ---------------
-All choices consist of letting users pick on of several items. For ``enquiries`` these
+All choices consist of letting users pick one of several items. For ``enquiries`` these
 can be in any iterable.
 
 Users can pick one or many of the options offered to them.
@@ -110,7 +111,7 @@ can be used to remove the need to hit return.
 Freetext
 --------
 ``enquiries`` free text offering is offers a slightly enhanced version of the
-``raw_input`` builtin function. It adds multi line support as well as basic
+`input <https://docs.python.org/3/library/functions.html>`_ builtin function. It adds multi line support as well as basic
 readline like controls (``Ctrl-a``, ``Ctrl-w`` etc). The text entry area is also cleared after the text is
 accepted keeping terminal history clean.
 
