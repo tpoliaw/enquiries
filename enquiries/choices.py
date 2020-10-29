@@ -2,6 +2,8 @@ import sys
 from curtsies import Input, FSArray , CursorAwareWindow, fsarray
 from curtsies.fmtfuncs import red, bold, green, on_blue, yellow
 
+from .error import SelectionAborted
+
 import random
 
 CHECKED = '\u25c9 '
@@ -106,20 +108,26 @@ class ChoiceList:
     def run(self, window):
         opt_arr = self.render(window.width)
         window.render_to_terminal(opt_arr)
-        with Input() as keyGen:
-            for key in keyGen:
-                if key == '<UP>':
-                    self.prev()
-                elif key == '<DOWN>':
-                    self.next()
-                elif key == '<SPACE>':
-                    if self._multi:
-                        self.toggle()
-                elif key == '<Ctrl-j>':
-                    break
-                else:
-                    continue
-                window.render_to_terminal(self.render(window.width))
+        try:
+            with Input() as keyGen:
+                for key in keyGen:
+                    if key == '<UP>':
+                        self.prev()
+                    elif key == '<DOWN>':
+                        self.next()
+                    elif key == '<SPACE>':
+                        if self._multi:
+                            self.toggle()
+                    elif key == '<Ctrl-j>':
+                        break
+                    elif key == '<ESC>':
+                        raise SelectionAborted(self.get_selection())
+                    else:
+                        continue
+                    window.render_to_terminal(self.render(window.width))
+        except KeyboardInterrupt as ke:
+            raise SelectionAborted(self.get_selection()) from ke
+
         return self.get_selection()
 
     def toggle(self):
