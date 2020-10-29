@@ -31,7 +31,7 @@ def test_iterate(clist):
     assert next(choices) == 'abcd'
     assert next(choices) == 'efgh'
     assert next(choices) == 'ijkl'
-    with pytest.raises(StopIteration, message='Iterator should have stopped'):
+    with pytest.raises(StopIteration):
         next(choices)
 
 def test_reverse(clist):
