@@ -116,14 +116,10 @@ class ChoiceList:
                     if self._multi:
                         self.toggle()
                 elif key == '<Ctrl-j>':
-                    if not self._multi:
-                        self.toggle()
                     break
                 else:
                     continue
                 window.render_to_terminal(self.render(window.width))
-        options = self.get_selection()
-        return options if self._multi else options[0]
         return self.get_selection()
 
     def toggle(self):
@@ -152,7 +148,12 @@ class ChoiceList:
         return arr
 
     def get_selection(self):
-        return [item[1]._obj for item in self._choices if item[0]]
+        options = [item[1]._obj for item in self._choices if item[0]]
+        if self._multi:
+            return options
+        elif options:
+            return options[0]
+        return self._choices[self._idx][1]._obj
 
     def next(self):
         self._idx = min(len(self)-1, self._idx+1)
