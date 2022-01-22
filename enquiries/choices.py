@@ -1,4 +1,6 @@
 import sys
+import warnings
+
 from curtsies import Input, FSArray , CursorAwareWindow, fsarray
 from curtsies.fmtfuncs import red, bold, green, on_blue, yellow
 
@@ -12,7 +14,7 @@ UNCHECKED = '\u25cc '
 def _no_fmt(s):
     return s
 
-def choose(prompt, choices, multi=False):
+def choose(prompt, choices, multi=False, preselected=()):
     """
     Offer a range of options to the user and return their selection
 
@@ -33,6 +35,12 @@ def choose(prompt, choices, multi=False):
     multi : bool
         Whether the user can choose multiple options
         Defaults to False
+    preselected : iterable
+        Optional argument when choosing multiple options
+        set a preselection of values using a list
+        * for ``dict`` type choices use a list of keys
+        * for ``list`` type choices use a list of indices
+        Defaults to tuple() (No preselection)
     Returns
     -------
         object
@@ -62,7 +70,7 @@ def choose(prompt, choices, multi=False):
         [1, 2]
     """
 
-    choice_list = ChoiceList(choices, prompt=prompt, multi=multi)
+    choice_list = ChoiceList(choices, prompt=prompt, multi=multi, preselected=preselected)
     with CursorAwareWindow(out_stream=sys.stderr, extra_bytes_callback=lambda x: x) as window:
         options = choice_list.run(window)
 
@@ -85,7 +93,7 @@ class Choice:
 
 
 class ChoiceList:
-    def __init__(self, choices, prompt=None, multi=False, sel_fmt=bold, des_fmt=_no_fmt, selected=CHECKED, deselected=UNCHECKED):
+    def __init__(self, choices, prompt=None, multi=False, preselected=(), sel_fmt=bold, des_fmt=_no_fmt, selected=CHECKED, deselected=UNCHECKED):
         if prompt:
             self._prompt = fsarray([bold(line) for line in prompt.split('\n')])
         else:
@@ -95,10 +103,15 @@ class ChoiceList:
         self._multi = multi
         if not choices:
             raise ValueError('No choices given')
+        if not self._multi:
+            if preselected:
+                warnings.warn("Preselection is only available for multiple choices", category=RuntimeWarning)
+            preselected = []
+
         if isinstance(choices, dict):
-            self._choices = [[False, Choice(v, k)] for k, v in choices.items()]
+            self._choices = [[k in preselected, Choice(v, k)] for k, v in choices.items()]
         else:
-            self._choices = [[False, Choice(c)] for c in choices]
+            self._choices = [[i in preselected, Choice(c)] for i, c in enumerate(choices)]
         self._sel_fmt = sel_fmt
         self._des_fmt = des_fmt
         self._sel = selected
