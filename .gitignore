@@ -21,3 +21,6 @@ docs/_build # if not
 # vim stuff
 **/.*.swo
 **/.*.swp
+
+# python virtual environment
+venv/

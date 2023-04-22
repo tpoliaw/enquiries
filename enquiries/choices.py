@@ -18,11 +18,12 @@ def choose(prompt, choices, multi=False):
     return options
 
 class Choice:
-    def __init__(self, obj):
-        self._obj = obj
+    def __init__(self, label, value=None):
+        self.label = label
+        self.value = value if value else label
 
     def __str__(self):
-        return str(self._obj)
+        return str(self.label)
 
     def render(self, fmt, width):
         lines = str(self).split('\n')
@@ -41,7 +42,10 @@ class ChoiceList:
         self._multi = multi
         if not choices:
             raise ValueError('No choices given')
-        self._choices = [[False, Choice(c)] for c in choices]
+        self._choices = [
+            [False, Choice(*c) if isinstance(c, tuple) else Choice(c)]
+            for c in choices
+        ]
         self._sel_fmt = sel_fmt
         self._des_fmt = des_fmt
         self._sel = selected
@@ -69,7 +73,6 @@ class ChoiceList:
                 window.render_to_terminal(self.render(window.width))
         options = self.get_selection()
         return options if self._multi else options[0]
-        return self.get_selection()
 
     def toggle(self):
         state = self._choices[self._idx]
@@ -97,7 +100,7 @@ class ChoiceList:
         return arr
 
     def get_selection(self):
-        return [item[1]._obj for item in self._choices if item[0]]
+        return [item[1].value for item in self._choices if item[0]]
 
     def next(self):
         self._idx = min(len(self)-1, self._idx+1)
@@ -110,17 +113,17 @@ class ChoiceList:
 
     def __getitem__(self, key):
         item = self._choices[key]
-        return item[1]._obj
+        return item[1].value
 
     def __setitem__(self, key, value):
-        self._choices[key] = [False, Choice(value)]
+        self._choices[key] = [False, Choice(*value) if isinstance(value, tuple) else Choice(value)]
 
     def __delitem__(self, key):
         del self._choices[key]
 
     def __contains__(self, item):
-        return item in [i[1]._obj for i in self._choices]
+        return item in [i[1].value for i in self._choices]
 
 
 if __name__ == "__main__":
-    c = choice('Prompt \n line 3: ', ['abc', 'def', 'ghi', 'jkl', 'mno'])
+    c = choose('Prompt \n line 3: ', ['abc', 'def', 'ghi', 'jkl', 'mno'])
