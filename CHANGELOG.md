@@ -1,5 +1,6 @@
 # CHANGELOG
 
+## [0.3.0] - YYYY-MM-DD
 ## [0.2.0] - 2023-04-23
 ## Added
  * Add dictionary support to choice prompt

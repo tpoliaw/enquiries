@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "enquiries"
-version = "0.2.0"
+version = "0.3.0pre"
 description = "Ask simple questions - get simple answers"
 authors = ["Peter Holloway <holloway.p.r@gmail.com>"]
 license = "MPL-2.0"
