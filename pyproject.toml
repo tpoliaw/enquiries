@@ -1,9 +1,19 @@
 [tool.poetry]
 name = "enquiries"
-version = "0.1.0"
+version = "0.2.0"
 description = "Ask simple questions - get simple answers"
 authors = ["Peter Holloway <holloway.p.r@gmail.com>"]
 license = "MPL-2.0"
+readme = "README.rst"
+keywords = ['cli', 'prompt', 'input']
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)"
+]
+
+[project.urls]
+"Homepage" = "https://gitlab.com/facingBackwards/enquiries"
+"Bug Tracker" = "https://gitlab.com/facingBackwards/enquiries/-/issues"
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -16,5 +26,5 @@ pytest = "^6.1.2"
 pytest-cov = "^2.10"
 
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["poetry>=1.0.8"]
+build-backend = "poetry.core.masonry.api"
